@@ -1,0 +1,195 @@
+{
+  "checks": [
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/build-app.py",
+        "--configuration",
+        "release",
+        "--output",
+        "build/Relay.app"
+      ],
+      "cwd": ".",
+      "env_keys": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+        "TOOLCHAINS"
+      ],
+      "format": "exit",
+      "id": "BUILD",
+      "kind": "compile",
+      "required": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "bundle",
+        "build/Relay.app"
+      ],
+      "cwd": ".",
+      "format": "script",
+      "id": "BUNDLE",
+      "kind": "static",
+      "required": true,
+      "success_pattern": "^PASS bundle$"
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "tests",
+        "CoreTests"
+      ],
+      "cwd": ".",
+      "env_keys": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+        "TOOLCHAINS"
+      ],
+      "format": "script",
+      "id": "CORE",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS CoreTests$",
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "tests",
+        "QuotaTests"
+      ],
+      "cwd": ".",
+      "env_keys": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+        "TOOLCHAINS"
+      ],
+      "format": "script",
+      "id": "QUOTA",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS QuotaTests$",
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "tests",
+        "AdapterTests"
+      ],
+      "cwd": ".",
+      "env_keys": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+        "TOOLCHAINS"
+      ],
+      "format": "script",
+      "id": "ADAPTERS",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS AdapterTests$",
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "tests",
+        "TransportPolicyTests"
+      ],
+      "cwd": ".",
+      "env_keys": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+        "TOOLCHAINS"
+      ],
+      "format": "script",
+      "id": "POLICY",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS TransportPolicyTests$",
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "tests",
+        "PrivacyTests"
+      ],
+      "cwd": ".",
+      "env_keys": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+        "TOOLCHAINS"
+      ],
+      "format": "script",
+      "id": "PRIVACY",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS PrivacyTests$",
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "tests",
+        "NavigationTests"
+      ],
+      "cwd": ".",
+      "env_keys": [
+        "DEVELOPER_DIR",
+        "SDKROOT",
+        "TOOLCHAINS"
+      ],
+      "format": "script",
+      "id": "NAV",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS NavigationTests$",
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/test_check_runner.py"
+      ],
+      "cwd": ".",
+      "format": "script",
+      "id": "RUNNER",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS check-runner$"
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/check.py",
+        "mock"
+      ],
+      "cwd": ".",
+      "format": "script",
+      "id": "MOCK",
+      "kind": "static",
+      "required": true,
+      "success_pattern": "^PASS mock-static$"
+    }
+  ],
+  "version": 1
+}
