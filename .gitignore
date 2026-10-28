@@ -1,0 +1,14 @@
+# Local design tools and generated previews are not application source.
+.agents/
+.taste-skill/
+skills-lock.json
+
+# Native builds, local evidence, and machine-specific files.
+.build/
+.swiftpm/
+build/
+dist/
+DerivedData/
+.DS_Store
+__pycache__/
+*.pyc

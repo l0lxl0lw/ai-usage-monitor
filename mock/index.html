@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark"><title>Relay · menu-bar-only mock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"><script src="data.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+  <div class="desktop-menu"><span class="app-caption">Menu-bar preview</span><button id="menu-trigger" aria-label="Toggle Relay menu" aria-expanded="true" aria-controls="popover"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 4v16m0-11h8a4 4 0 0 0 4-4M6 9h8a4 4 0 0 1 4 4v7"/><circle cx="6" cy="4" r="1.6"/><circle cx="18" cy="4" r="1.6"/><circle cx="18" cy="20" r="1.6"/></svg><span id="menu-count"></span><span class="menu-divider"></span><span id="menu-usage"></span></button></div>
+  <main class="popover" id="popover" aria-label="Relay menu-bar popover">
+    <header class="popup-header"><button id="back" class="icon-button" aria-label="Back" hidden><svg aria-hidden="true" viewBox="0 0 20 20"><path d="m12 4-6 6 6 6"/></svg></button><div class="header-copy"><div class="brand-line"><svg id="brand-mark" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 4v16m0-11h8a4 4 0 0 0 4-4M6 9h8a4 4 0 0 1 4 4v7"/><circle cx="6" cy="4" r="1.6"/><circle cx="18" cy="4" r="1.6"/><circle cx="18" cy="20" r="1.6"/></svg><h1 id="screen-title">Relay</h1></div><p id="screen-subtitle">All your work, one glance.</p></div><button id="settings" class="icon-button" aria-label="Open settings"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14"/><circle cx="7" cy="5" r="2"/><circle cx="13" cy="10" r="2"/><circle cx="8" cy="15" r="2"/></svg></button></header>
+    <nav class="tabs" id="tabs" aria-label="Popover sections"><button id="usage-tab" data-tab="usage" aria-current="page">Usage</button><button id="agents-tab" data-tab="agents">Agents <span id="agent-badge"></span></button></nav>
+    <div id="content" class="popup-content" tabindex="-1"></div>
+    <footer class="popup-footer"><span id="footer-status"><span class="dot"></span>Sample data · 10:42</span><button id="advance" aria-label="Advance simulated agent activity">Advance demo <span aria-hidden="true">↗</span></button></footer>
+  </main>
+  <p class="preview-note">Interactive design mock. No live accounts or agents.<br>Everything stays inside this popover.</p>
+  <div id="toast" role="status" hidden></div>
+</body>
+</html>
