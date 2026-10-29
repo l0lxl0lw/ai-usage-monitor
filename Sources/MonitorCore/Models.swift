@@ -3,7 +3,6 @@ import Foundation
 public enum Source: String, Codable, CaseIterable { case codex, claude, opencode, orca }
 public enum Coverage: String, Codable { case observed, empty, missing, stale, partial, unsupported, notCollecting, failed }
 public enum Activity: String, Codable, CaseIterable { case working, waiting, idle, stopped, interrupted, succeeded, failed, unknown }
-public enum Mode: String, CaseIterable { case demo = "Demo", live = "Live" }
 
 public struct AgentID: Hashable, Codable, CustomStringConvertible {
     public let source: Source

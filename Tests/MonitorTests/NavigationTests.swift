@@ -1,7 +1,29 @@
 import XCTest
 import MonitorCore
+import SwiftUI
+@testable import MonitorPresentation
 
 final class NavigationTests: XCTestCase {
+    @MainActor func testProductionViewCompositionUsesLiveServicesAndAllNativeRoutes() {
+        let name = "Relay.NavigationTests.\(UUID())", defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+        let app = AppServices(defaults: defaults, startInfrastructure: false)
+        defer { app.shutdown() }
+        let account = Account(id: UUID(), source: .codex, alias: "Synthetic navigation")
+        let id = AgentID(.codex, account.id, "synthetic", "child")
+        app.store.update(account); app.store.upsert(Agent(id: id, account: account.id))
+        var closed = false
+        let root = PopoverRoot(services: app, close: { closed = true })
+        let host = NSHostingView(rootView: root)
+        host.frame = NSRect(x: 0, y: 0, width: 420, height: 660)
+        for route in [Route.agents, .account(account.id), .agent(id), .settings] {
+            app.navigation.push(route); _ = root.body; host.layoutSubtreeIfNeeded()
+            XCTAssertEqual(app.navigation.route, route)
+            XCTAssertTrue(app.navigation.back())
+        }
+        XCTAssertEqual(app.navigation.route, .usage); XCTAssertFalse(closed)
+        XCTAssertTrue(root.services === app)
+    }
     func testTreeOrderPlacesParentBeforeAlphabeticallyEarlierGrandchild() {
         var navigation = NavigationState()
         navigation.offsets[.usage] = 320; navigation.offsets[.agents] = 125

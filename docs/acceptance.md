@@ -15,7 +15,10 @@ Required manual scenarios on the current built source:
 1. M-GUI: one status item/popover; Usage/account/Agents/details and reported
    parent/child/account crosslinks; search/project/state/collapse matching counts;
    backstack and scroll/focus; Escape/back/close/reopen; height constrained to screen.
-   Persistent captures may contain synthetic demo data only.
+   Rich persistent captures use the separate synthetic-only NativeHarness with
+   the exact production presentation library, never a production sample route.
+   Separately observe actual no-profile production launch and automatic saved
+   Codex startup with no captures/identity persistence.
 2. M-CODEX: approved official binary/version/hash and privately pseudonymized
    existing profile; usable real quota/reset read before native implementation,
    repeated through built adapter and Live UI; no inference/login/token extraction;
@@ -30,6 +33,10 @@ Required manual scenarios on the current built source:
 
 The runner binds source/environment/log fingerprints; manually observed external
 state must be described separately and never fabricated from compilation/fixtures.
+
+All Demo/manual-mode observations below are historical superseded-build evidence,
+not acceptance of the revised Live-only startup. The original pre-implementation
+receipt remains immutable private chronology; it is not new production proof.
 
 ## Historical native observations, 2026-10-28 (before repair 1)
 
@@ -162,7 +169,9 @@ bridge SHA-256 remains
   now computes that exact expected header from visibly synthetic input. A real
   loopback check accepted the exact header and rejected wrong-token, wrong-scheme
   and empty headers. No auth assertion, scanner policy or ignore rule was weakened;
-  no credential rotation or history rewrite is appropriate for this synthetic value.
+   no credential rotation was appropriate for this synthetic value. The later
+   expressly approved feature-only history cleanup supersedes that earlier
+   no-rewrite decision; it does not change fixture authentication or scanner policy.
 - **M-GUI full current repeat:** one actual status item and sole popover (window
   82421), settled outer dimensions 446 × 686, with fixed header/footer and scrollable
   content. Actual screen visible frame was 3440 × 1320; the source's 660-point
@@ -207,4 +216,122 @@ bridge SHA-256 remains
   capture semantics, the synthetic fixture representation and this evidence.
   Private GUI helpers/captures and provider data are not repository additions.
   No commit, push, PR mutation, scanner suppression or workflow-policy change was
-  performed by this worker. Independent review and actual CI still follow.
+   performed by this worker. Independent review and actual CI still follow.
+
+## Revised Live-only execution observations, 2026-10-29 UTC
+
+These replace the historical Demo-mode proof for the revised plan. Observed on
+macOS 26.6.2 (25G83), arm64, Xcode 27.1 (27A9275), approximately 03:05–03:13 UTC.
+This remains local source-build evidence, not macOS 14 runtime, architecture,
+accessibility or distribution certification. Base HEAD is
+`f796cdf04c89aecf130037f08504f7883b376d8e` plus the revised-scope working tree;
+the verification receipt binds its complete final source content.
+
+### Build and provenance
+
+- Production Relay SHA-256:
+  `c54d961e1f9e62376f030b8cd37cf62ec5fd374cb7edeac09ddf4793bd890390`.
+  Bridge SHA-256:
+  `fe6203312e93772eacfd12cd9bb371c78a49f1876d1205bc25d8665af478e978`.
+- Separate release NativeHarness SHA-256:
+  `fb5d3aaa1f223105bf2f972055cfd572077f825924449db723328fbd94193467`.
+  Its private locally signed wrapper uses a separate bundle ID/preferences and
+  no startup listener/timer/Keychain cleanup. All data was synthetic. It links
+  the **same** MonitorPresentation library: AppServices, PopoverController,
+  PopoverRoot, SettingsViews and ScrollMemory, not copied view implementations.
+  SyntheticFixtures/Harness live only under Tests/NativeHarness; Relay's target
+  dependency closure cannot reach them. BUNDLE checks the positive source and
+  dependency/resource inventory, exact signed bundle files, deployment target
+  and distinctive fixture/flag/harness binary canaries. BUILD selects only the
+  two shipped products. The preserved mock is unshipped.
+
+### M-GUI: direct production and separate synthetic-only rich sequence
+
+- Stopped the previously running historical test build before launching the new
+  production executable. Privately backed up the complete existing preference
+  domain (one explicitly saved Codex profile), temporarily removed only Relay's
+  saved-profile key, then launched the actual production bundle. Observed Live,
+  no Demo/Observation mode selector, zero accounts, no configured profiles, and
+  Agents with zero matching observations and all four sources Not collecting.
+  No source login discovery, pairing, Orca read or external config edit occurred.
+  Quit through native Settings, restored the **entire** preference domain and
+  independently compared it to the backup for equality before the saved launch.
+  No Live screenshot was requested. A private recovery backup remains available.
+- Rich navigation used only the separate synthetic harness (PID 17438, sole
+  popover window 82634). Settled outer size 446 × 686 / 420 × 660 content; fixed
+  header/footer and native scrolling. The 660-point cap fits the current screen;
+  smaller-screen/macOS 14 certification is not claimed.
+- Usage scroll set/read back 0.8; Codex/Work → Build menu-bar monitor → Menu-bar
+  shell → Keyboard regression checks → reported Parent → Account. Six Escape
+  backs traversed the reverse stack to Usage; native scroll restored to
+  0.8003992015968064. Every route stayed in that same window.
+- Agents visually ordered parent/child/grandchild, count 8. Collapse root hid
+  descendants without changing count. Tab actually focused search; typed
+  Keyboard produced one direct match with two ancestor context rows, despite
+  collapse. Native state working yielded 0; stopped yielded 1. Project docs-site
+  yielded 0; ai-usage-monitor yielded 1. Actual native menu AXPress selections
+  were verified by fresh selected values/counts, not inferred keyboard delivery.
+- Matching grandchild detail/Back and Settings/Back retained all three filters
+  and count. Root Escape independently left zero windows; actual status-item
+  AXPress reopened with Keyboard/ai-usage-monitor/stopped/count 1 and root focus.
+  Root Close independently left zero windows; status-item AXPress again reopened
+  with the same retained filters/count/focus.
+- Reset native pickers and cleared search through focused Cmd+A/Backspace:
+  count 8 and original collapse restored. Expanding restored descendants without
+  count change. Browser regression checks showed unknown immediate parent/account;
+  Session membership opened Repair mobile navigation. Two Escape backs returned
+  Agents. Agents native scroll 0.7 survived detail/Back as 0.7014388489208633.
+- Only synthetic harness captures were saved privately. Orca sometimes omitted
+  native menu children or reported a closed-window error after a successful
+  close; System Events AXPress and fresh snapshots/window lists established the
+  actual outcomes. An attempted coordinate menu click did not change selection
+  and was not counted as successful proof.
+
+### M-CODEX: NEW automatic production saved-profile startup
+
+At 03:07:41 UTC the newly launched actual production bundle (PID 15917) displayed
+the existing explicitly saved authorized profile, private pseudonym A, with no
+mode switch or manual quota action: **Weekly 28% used**, reset **Nov 3 at 23:00
+local**, fresh measurement **Oct 28 at 20:07:27 local**, observed coverage and
+official Codex 0.154.0/owned-helper-stopped source label. Process inspection found
+**no owned child remaining** after the read. Official CLI version was 0.154.0,
+SHA-256 `4f85982624b3898c8991cb80c0981b2aa71070e3537046c9a95950318a95afcc`.
+Quit through actual native Settings. No raw identity/auth/payload, Live snapshot,
+model turn, new login/logout, token extraction or provider configuration edit was
+performed/persisted. The original successful pre-implementation receipt remains
+unchanged private historical chronology, never substituted for this new proof.
+Synthetic two-profile tests do not claim two-real-account release certification.
+
+### M-SETUP, regressions and public boundary
+
+Expanded the exact production native hook/pairing views in the separate harness:
+preserve existing handlers/statusline; absolute shell-quoted bridge; official
+exact-hash /hooks trust; future-only collection and unknown immediate ancestry;
+broad token NOT read-only; Pair disabled before consent; Keychain ownership,
+local cleanup/re-pair/restart/failure and unchanged-server semantics. Inspected
+both unchanged manual snippets against the pinned schemas/research. No actual
+pairing, hook installation or external settings mutation was attempted.
+
+F1 accountId/same-email identity protection, F2 correlated child stops, F3 socket
+ownership/crash recovery, F4 token replacement/cleanup/cancel ownership and F5
+full current rich GUI proof remain regression obligations. The first four retain
+their existing production tests; actual AppServices startup tests additionally
+prove empty/malformed launch, valid/duplicate/canonical-collision/unsupported
+profiles, mixed Codex/Claude, startup/timer/manual convergence, independent bounded
+throttling, identity failure with stale retention, unsupported runtime, cancelled
+late reads and empty observation restart. NAV now composes the actual native
+root against these services, not solely an unrelated NavigationState instance.
+Required ten manifest definitions remain unchanged; the runner verifies the
+expanded exact 45-case XCTest inventory, without skips.
+
+Author audit: only application source, test-only synthetic harness/fixtures,
+inventory/check strengthening and truthful source-install/evidence documentation
+are proposed. MIT/license, transport/privacy/scanner policies and exact synthetic
+fixture authentication remain intact. Feature history above preserved main is
+one approved owner-rewritten feature commit; this worker performed **no Git or
+journal mutations** and was not exposed an actual Task session ID for claiming.
+Owner must claim the returned Task ID, preserve same-key repair use **2/3**, obtain
+fresh independent review, audit final publication/history and exact expected-old
+remote OID, then perform only the approved guarded PR #2 update/current-head CI
+and main-freshness gates. No remote CI success, review pass, PR merge, binary/DMG
+upload, notarization or installer release is asserted by this execution.

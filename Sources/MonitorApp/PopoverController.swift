@@ -1,23 +1,14 @@
 import AppKit
 import SwiftUI
 
-@main enum RelayApp {
-    static func main() {
-        let application = NSApplication.shared
-        let delegate = PopoverController()
-        application.delegate = delegate
-        application.setActivationPolicy(.accessory)
-        application.run()
-        withExtendedLifetime(delegate) {}
-    }
-}
-
-@MainActor final class PopoverController: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+@MainActor public final class PopoverController: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private var item: NSStatusItem!
     private let popover = NSPopover()
-    private let services = AppServices()
+    private let services: AppServices
     private var outsideClick: Any?
-    func applicationDidFinishLaunching(_ notification: Notification) {
+    public override convenience init() { self.init(services: AppServices()) }
+    public init(services: AppServices) { self.services = services; super.init() }
+    public func applicationDidFinishLaunching(_ notification: Notification) {
         item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.title = "◉ Relay"
         item.button?.setAccessibilityLabel("Open Relay usage and agent monitor")
@@ -29,7 +20,7 @@ import SwiftUI
         popover.contentViewController = NSHostingController(rootView: PopoverRoot(services: services, close: { [weak self] in self?.popover.performClose(nil) }))
         if CommandLine.arguments.contains("--show") { DispatchQueue.main.async { if !self.popover.isShown { self.toggle() } } }
     }
-    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+    public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if !popover.isShown { toggle() }
         return false
     }
@@ -48,7 +39,7 @@ import SwiftUI
             NSAccessibility.post(element: window, notification: .created)
         }
     }
-    func applicationWillTerminate(_ notification: Notification) {
+    public func applicationWillTerminate(_ notification: Notification) {
         if let outsideClick { NSEvent.removeMonitor(outsideClick) }
         services.shutdown()
     }

@@ -21,6 +21,14 @@ failure backoff up to one hour. Cancellation invalidates that profile generation
 Last-known values remain marked stale; passed resets never turn them into zero.
 Multiple real-account certification remains a separate release gate.
 
+Production is Live-only. A new installation has no profiles/accounts/agents and
+does not inspect login directories. Only valid explicitly saved Codex profiles
+are read automatically at launch, using the same per-profile polling guards.
+Newly added profiles can be read manually or on the next timer/launch. Claude
+does not gain idle polling, and OpenCode/Orca do not connect automatically.
+Only profile configuration persists; restarting never restores quota, titles or
+session history without a new observation.
+
 ## Codex future lifecycle observations
 
 Pinned source: Codex 0.154.0, revision

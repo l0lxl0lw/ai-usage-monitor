@@ -12,7 +12,7 @@ struct SettingsViews: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("Local connections").font(.headline)
-            Text("Demo and Live are separate. No source service, login, model turn, hook or external setting is started or changed automatically.").font(.caption).foregroundStyle(.secondary)
+            Text("Live observations only. Explicitly saved Codex profiles refresh at launch. No logins are discovered; no source service, login, model turn, hook or external setting is started or changed automatically.").font(.caption).foregroundStyle(.secondary)
             DisclosureGroup("Codex / Claude account profiles") {
                 VStack(alignment: .leading, spacing: 10) {
                     Picker("Provider", selection: $provider) { Text("Codex").tag(Source.codex); Text("Claude").tag(Source.claude) }
@@ -20,7 +20,7 @@ struct SettingsViews: View {
                     TextField("Existing absolute profile home", text: $home)
                     Text("Codex uses ~/.local/bin/codex (official 0.154.0) and the selected CODEX_HOME. Claude uses the selected CLAUDE_CONFIG_DIR for manual telemetry setup. Canonical home collisions are rejected; default logins are never swapped.").font(.caption)
                     Button("Add existing profile") {
-                        do { try services.addProfile(Profile(source: provider, alias: alias, home: home)); services.message = "Profile added. Switch to Live and refresh Codex, or manually enable hooks." }
+                        do { try services.addProfile(Profile(source: provider, alias: alias, home: home)); services.message = "Profile saved. Read Codex quota now or at next launch; enable hooks manually." }
                         catch { services.message = "Invalid profile or duplicate canonical home" }
                     }
                     ForEach(services.profiles) { profile in

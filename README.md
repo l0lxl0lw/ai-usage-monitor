@@ -24,11 +24,26 @@ they never connect to your provider accounts or start a source service.
 
 ## First use
 
-Relay starts in **Demo**, visibly labeled synthetic. Live is a separate, initially
-empty in-memory store and never falls back to demo data after a failed read.
+Relay starts **Live-only**, empty until you explicitly save existing profiles.
+There is no sample mode, hidden sample flag or automatic login discovery. Valid
+saved Codex profiles refresh automatically at launch through the same bounded,
+per-profile single-flight/backoff path as timer and manual reads. Claude remains
+ordinary-session-driven; OpenCode pairing and Orca observation remain explicit.
+Failed reads never fall back to synthetic data or fabricated zero allowance.
 Use Connections & settings to add existing Codex/Claude profiles, manually wire
 future lifecycle telemetry, explicitly pair OpenCode V2, or observe local Orca
 metadata. No configuration outside Relay is edited automatically.
+
+For a local source install, build as above and open that exact `build/Relay.app`;
+you may copy it to your own Applications folder. There is no installer, DMG,
+notarized download or authorized binary release in this delivery.
+
+Developers can build `swift build -c release --product NativeHarness` and run
+the resulting `NativeHarness --show` for synthetic-only UI checks. It shares
+the exact production presentation library, uses no provider accounts/listener,
+and is never linked or copied into Relay.app. Its observations/captures are not
+Live-source certification. The production build selects only Relay/relay-bridge;
+BUNDLE audits target dependencies, source/resource inventory and binary canaries.
 
 Codex quota reads require the official `~/.local/bin/codex` **0.154.0** and an
 already authenticated profile home. The official CLI owns its credentials and

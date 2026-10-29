@@ -9,7 +9,8 @@ p = argparse.ArgumentParser()
 p.add_argument('--configuration', choices=['debug', 'release'], default='release')
 p.add_argument('--output', type=pathlib.Path, default=pathlib.Path('build/Relay.app'))
 args = p.parse_args()
-subprocess.run(['swift', 'build', '-c', args.configuration], check=True)
+for product in ['Relay', 'relay-bridge']:
+    subprocess.run(['swift', 'build', '-c', args.configuration, '--product', product], check=True)
 binary_dir = pathlib.Path(subprocess.check_output(['swift', 'build', '-c', args.configuration, '--show-bin-path'], text=True).strip())
 macos = args.output / 'Contents/MacOS'
 macos.mkdir(parents=True, exist_ok=True)

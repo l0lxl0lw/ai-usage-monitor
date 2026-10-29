@@ -10,6 +10,8 @@ let package = Package(
         .target(name: "MonitorCore"),
         .target(name: "MonitorAdapters", dependencies: ["MonitorCore"]),
         .executableTarget(name: "MonitorBridge", dependencies: ["MonitorAdapters"]),
-        .executableTarget(name: "MonitorApp", dependencies: ["MonitorCore", "MonitorAdapters"]),
-        .testTarget(name: "MonitorTests", dependencies: ["MonitorCore", "MonitorAdapters"])
+        .target(name: "MonitorPresentation", dependencies: ["MonitorCore", "MonitorAdapters"], path: "Sources/MonitorApp"),
+        .executableTarget(name: "MonitorApp", dependencies: ["MonitorPresentation"], path: "Sources/Relay"),
+        .executableTarget(name: "NativeHarness", dependencies: ["MonitorPresentation", "MonitorCore"], path: "Tests/NativeHarness"),
+        .testTarget(name: "MonitorTests", dependencies: ["MonitorCore", "MonitorAdapters", "MonitorPresentation"])
     ])

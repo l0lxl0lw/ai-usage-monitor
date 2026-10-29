@@ -3,14 +3,18 @@ import SwiftUI
 import MonitorCore
 import MonitorAdapters
 
-@MainActor final class AppServices: ObservableObject {
-    @Published var mode: Mode = .demo
+@MainActor public final class AppServices: ObservableObject {
     @Published var revision = 0
     @Published var navigation = NavigationState()
     @Published var message = ""
     @Published var profiles: [Profile] = []
     @Published var showStopped = true
-    let demo = MonitorStore(), live = MonitorStore()
+    public let store = MonitorStore()
+    private var live: MonitorStore { store }
+    private let defaults: UserDefaults
+    private let quotaRead: @Sendable (Profile) async throws -> CodexQuota
+    private let now: () -> Date
+    private let startInfrastructure: Bool
     private let registry = try! ProfileRegistry()
     private let listener = HookListener()
     private var polling: [UUID: PollSchedule] = [:]
@@ -23,14 +27,21 @@ import MonitorAdapters
     private var eventsJob: Task<Void, Never>?
     private var orcaJob: Task<Void, Never>?
     private var connectionGeneration = UUID()
-    var store: MonitorStore { mode == .demo ? demo : live }
-    init() {
-        DemoFixtures.populate(demo)
-        do { try openCodeConnection.disconnect() }
-        catch { message = "Keychain cleanup failed; retry Disconnect before pairing. No connection restored." }
-        if let data = UserDefaults.standard.data(forKey: "Relay.profiles"), let saved = try? JSONDecoder().decode([Profile].self, from: data) {
+    public init(defaults: UserDefaults = .standard, startInfrastructure: Bool = true,
+                now: @escaping () -> Date = Date.init,
+                quotaRead: @escaping @Sendable (Profile) async throws -> CodexQuota = { try await AppServices.readQuota($0) }) {
+        self.defaults = defaults; self.startInfrastructure = startInfrastructure
+        self.now = now; self.quotaRead = quotaRead
+        if startInfrastructure {
+            do { try openCodeConnection.disconnect() }
+            catch { message = "Keychain cleanup failed; retry Disconnect before pairing. No connection restored." }
+        }
+        if let data = defaults.data(forKey: "Relay.profiles"), let saved = try? JSONDecoder().decode([Profile].self, from: data) {
             for profile in saved { try? addProfile(profile, persist: false) }
         }
+        // The same guarded path serves launch, timer, and manual reads. No login discovery.
+        refreshDue()
+        guard startInfrastructure else { return }
         do {
             try listener.start { [weak self] message in
                 Task { @MainActor [weak self] in
@@ -57,30 +68,26 @@ import MonitorAdapters
         }
     }
     func addProfile(_ profile: Profile, persist: Bool = true) throws {
-        guard profile.home.hasPrefix("/"), !profile.alias.isEmpty else { throw ModelError.invalidInput }
+        guard [.codex, .claude].contains(profile.source), profile.home.hasPrefix("/"),
+              !profile.home.contains("\0"), !profile.alias.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw ModelError.invalidInput }
         try registry.add(profile); profiles = registry.profiles
         live.update(Account(id: profile.id, source: profile.source, alias: profile.alias))
         live.sourceCoverage[profile.source] = .notCollecting
-        if persist { UserDefaults.standard.set(try JSONEncoder().encode(profiles), forKey: "Relay.profiles") }
+        if persist { defaults.set(try JSONEncoder().encode(profiles), forKey: "Relay.profiles") }
         revision += 1
     }
-    func changeMode(_ next: Mode) { mode = next; navigation = NavigationState(); revision += 1 }
     func refreshDue() {
-        guard mode == .live else { return }
-        live.expireMeasurements(before: Date().addingTimeInterval(-180))
+        live.expireMeasurements(before: now().addingTimeInterval(-180))
         for profile in profiles where profile.source == .codex { refresh(profile) }
     }
     func refresh(_ profile: Profile) {
+        guard profiles.contains(profile), profile.source == .codex else { return }
         var schedule = polling[profile.id] ?? PollSchedule()
-        guard schedule.begin(now: Date()) else { message = "Refresh is single-flight and limited to once per minute (longer after failures)."; return }
+        guard schedule.begin(now: now()) else { return }
         polling[profile.id] = schedule
         let generation = live.generations[profile.id] ?? live.restart(profile.id)
-        let executable = NSString(string: "~/.local/bin/codex").expandingTildeInPath
-        let task = Task.detached { () throws -> CodexQuota in
-            let client = try CodexRPC(executable: executable, home: profile.canonicalHome)
-            defer { client.stop() }
-            return try client.read()
-        }
+        let read = quotaRead
+        let task = Task.detached { try await read(profile) }
         jobs[profile.id] = task
         Task {
             do {
@@ -88,16 +95,16 @@ import MonitorAdapters
                 guard live.generations[profile.id] == generation else { return }
                 try registry.checkIdentity(quota.identity, profile: profile.id)
                 var account = Account(id: profile.id, source: .codex, alias: profile.alias)
-                account.windows = quota.windows; account.credits = quota.credits; account.observedAt = Date()
+                account.windows = quota.windows; account.credits = quota.credits; account.observedAt = now()
                 account.coverage = .observed; account.note = "Official Codex 0.154.0 app-server · owned helper stopped"
                 live.update(account); live.sourceCoverage[.codex] = .partial
-                polling[profile.id]?.finish(now: Date(), success: true)
+                polling[profile.id]?.finish(now: now(), success: true)
                 message = "Codex quota measured. Activity requires separately trusted hooks."
             } catch {
                 guard live.generations[profile.id] == generation else { return }
                 var retryAfter: Double?
                 if case TransportError.throttled(let hint) = error { retryAfter = hint }
-                live.markFailure(profile.id); polling[profile.id]?.finish(now: Date(), success: false, retryAfter: retryAfter)
+                live.markFailure(profile.id); polling[profile.id]?.finish(now: now(), success: false, retryAfter: retryAfter)
                 message = "Codex read unavailable or identity changed. Last-known values are not renewed allowance."
                 if case TransportError.unsupported = error, var account = live.accounts[profile.id] {
                     account.coverage = .unsupported; account.note = "Unsupported CLI version · requires reviewed Codex 0.154.0 wire contract"
@@ -174,8 +181,16 @@ import MonitorAdapters
             } catch { live.sourceCoverage[.orca] = .failed; message = "Orca metadata unavailable · no runtime was started" }
         }
     }
-    func shutdown() {
+    nonisolated public static func readQuota(_ profile: Profile) async throws -> CodexQuota {
+        let executable = NSString(string: "~/.local/bin/codex").expandingTildeInPath
+        let client = try CodexRPC(executable: executable, home: profile.canonicalHome)
+        defer { client.stop() }
+        return try client.read()
+    }
+    public func shutdown() {
+        for profile in profiles { cancel(profile) }
         timer?.invalidate(); jobs.values.forEach { $0.cancel() }; openCodeJob?.cancel(); eventsJob?.cancel(); orcaJob?.cancel(); listener.stop()
+        guard startInfrastructure else { return }
         do { try openCodeConnection.disconnect() }
         catch { message = "Keychain cleanup incomplete; Relay will retry its owned-token cleanup at next launch." }
     }

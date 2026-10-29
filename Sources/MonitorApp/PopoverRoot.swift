@@ -17,14 +17,11 @@ struct PopoverRoot: View {
                 } else { Image(systemName: "circle.hexagongrid.fill").foregroundStyle(.teal) }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.headline)
-                    Text(services.mode == .demo ? "Synthetic sample · no live accounts" : "Local observations · coverage may be partial").font(.caption2).foregroundStyle(.secondary)
+                    Text("Local observations · coverage may be partial").font(.caption2).foregroundStyle(.secondary)
                 }
                 Spacer(minLength: 0)
                 Button { services.navigation.push(.settings) } label: { Image(systemName: "gearshape") }.accessibilityLabel("Connections and settings")
             }.padding(16)
-            Picker("Observation mode", selection: Binding(get: { services.mode }, set: { services.changeMode($0) })) {
-                ForEach(Mode.allCases, id: \.self) { Text($0.rawValue).tag($0) }
-            }.pickerStyle(.segmented).padding(.horizontal, 16).padding(.bottom, 10)
             if services.navigation.route == .usage || services.navigation.route == .agents {
                 HStack {
                     Button("Usage") { services.navigation.tab(.usage) }.buttonStyle(.borderedProminent).tint(services.navigation.route == .usage ? .teal : .gray)
@@ -38,7 +35,7 @@ struct PopoverRoot: View {
                     switch services.navigation.route {
                     case .usage: usage
                     case .agents: agentList
-                    case .account(let id): if let account = services.store.accounts[id] { accountDetail(account) } else { Text("Account unavailable in this mode") }
+                    case .account(let id): if let account = services.store.accounts[id] { accountDetail(account) } else { Text("Account unavailable") }
                     case .agent(let id): if let agent = services.store.agents[id] { agentDetail(agent) } else { Text("Observation unavailable") }
                     case .settings: SettingsViews(services: services)
                     }
@@ -48,8 +45,8 @@ struct PopoverRoot: View {
             .onChange(of: services.navigation.route) { _, _ in focused = true }
             Divider()
             HStack {
-                Circle().fill(services.mode == .demo ? .orange : .teal).frame(width: 6, height: 6)
-                Text(services.mode == .demo ? "Demo · synthetic data" : "Live · observed, not complete history").font(.caption2).foregroundStyle(.secondary)
+                Circle().fill(.teal).frame(width: 6, height: 6)
+                Text("Live · observed, not complete history").font(.caption2).foregroundStyle(.secondary)
                 Spacer()
                 Button("Close", action: close).font(.caption2)
             }.padding(12)
@@ -139,9 +136,7 @@ struct PopoverRoot: View {
                 }
             }
             Text("Lines mean reported links, never inferred ancestry. Stop, absence and silence do not establish global success.").font(.caption).foregroundStyle(.secondary)
-            if services.mode == .live {
-                ForEach(Source.allCases, id: \.self) { source in Text("\(source.rawValue): \((services.live.sourceCoverage[source] ?? .notCollecting).rawValue)").font(.caption2) }
-            }
+            ForEach(Source.allCases, id: \.self) { source in Text("\(source.rawValue): \((services.store.sourceCoverage[source] ?? .notCollecting).rawValue)").font(.caption2) }
         }.scrollTargetLayout()
     }
     private func visible(_ agent: Agent, context: Set<AgentID>) -> Bool {
@@ -154,7 +149,7 @@ struct PopoverRoot: View {
     private func accountDetail(_ account: Account) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             quota(account)
-            if services.mode == .live, let profile = services.profiles.first(where: { $0.id == account.id }), profile.source == .codex {
+            if let profile = services.profiles.first(where: { $0.id == account.id }), profile.source == .codex {
                 HStack { Button("Refresh quota") { services.refresh(profile) }; Button("Cancel this profile") { services.cancel(profile) } }
             }
             Text("Associated observed agents").font(.headline)

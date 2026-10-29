@@ -18,3 +18,8 @@ Before public binary distribution, require:
 
 Delivery itself still requires current-build native GUI observation and real
 Codex adapter/Live UI quota proof; those are not waived by this release checklist.
+For the revised Live-only contract this means direct empty production startup,
+automatic quota display for an explicitly saved existing Codex profile, and the
+full rich GUI sequence in a separate synthetic-only exact-view harness. The
+harness and historical Demo captures never certify live sources. Source install
+instructions do not authorize a binary/DMG/installer upload.

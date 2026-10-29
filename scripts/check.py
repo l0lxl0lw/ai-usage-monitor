@@ -52,12 +52,38 @@ def main():
             info = plistlib.load(file)
         assert info['LSUIElement'] is True and info['LSMinimumSystemVersion'] == '14.0'
         assert info['CFBundleExecutable'] == 'Relay'
+        # Positive target/source inventory: fixture and harness targets cannot be
+        # dependencies of the shipped executables (even transitively).
+        package = json.loads(subprocess.check_output(['swift', 'package', 'describe', '--type', 'json'], text=True))
+        targets = {target['name']: target for target in package['targets']}
+        expected = {
+            'MonitorApp': ('Sources/Relay', ['Relay.swift'], ['MonitorPresentation']),
+            'MonitorPresentation': ('Sources/MonitorApp', ['AppServices.swift', 'PopoverController.swift', 'PopoverRoot.swift', 'ScrollMemory.swift', 'SettingsViews.swift'], ['MonitorAdapters', 'MonitorCore']),
+            'MonitorBridge': ('Sources/MonitorBridge', ['main.swift'], ['MonitorAdapters']),
+            'MonitorCore': ('Sources/MonitorCore', ['Models.swift', 'MonitorStore.swift', 'NavigationState.swift', 'PrivacyProjection.swift'], []),
+            'MonitorAdapters': ('Sources/MonitorAdapters', ['ClaudeAdapter.swift', 'CodexAdapter.swift', 'HookBridgeTransport.swift', 'OpenCodeAdapter.swift', 'OrcaAdapter.swift', 'ProfileRegistry.swift', 'TransportPolicy.swift'], ['MonitorCore'])
+        }
+        for name, (path, sources, dependencies) in expected.items():
+            target = targets[name]
+            assert target['path'] == path and sorted(target['sources']) == sorted(sources), name
+            assert sorted(target.get('target_dependencies', [])) == sorted(dependencies), name
+            assert not target.get('product_dependencies'), name
+            assert not target.get('resources'), name
+        for source in pathlib.Path('Sources').rglob('*.swift'):
+            text = source.read_text()
+            for forbidden in ['DemoFixtures', 'SyntheticFixtures', 'NativeHarness', 'changeMode', 'Observation mode', '--demo', '--sample', 'Build menu-bar monitor']:
+                assert forbidden not in text, (source, forbidden)
+        actual = {str(path.relative_to(bundle)) for path in bundle.rglob('*') if path.is_file()}
+        assert actual == {'Contents/Info.plist', 'Contents/MacOS/Relay', 'Contents/MacOS/relay-bridge', 'Contents/_CodeSignature/CodeResources'}, actual
         for name in ['Relay', 'relay-bridge']:
             binary = bundle / 'Contents/MacOS' / name
             assert binary.is_file() and binary.stat().st_mode & 0o111
             subprocess.run(['codesign', '--verify', str(binary)], check=True)
             load = subprocess.check_output(['xcrun', 'vtool', '-show-build', str(binary)], text=True)
             assert 'minos 14.0' in load, 'wrong deployment target'
+            strings = subprocess.check_output(['strings', str(binary)], text=True)
+            for canary in ['SyntheticFixtures', 'NativeHarness', 'Synthetic frozen sample', 'Build menu-bar monitor', 'Observation mode', '--demo', '--sample']:
+                assert canary not in strings, (name, canary)
         assert not list(bundle.rglob('*.html'))
         print('PASS bundle')
     elif mode == 'mock':

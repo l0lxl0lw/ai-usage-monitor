@@ -1,7 +1,7 @@
 import Foundation
 import MonitorCore
 
-enum DemoFixtures {
+enum SyntheticFixtures {
     static func populate(_ store: MonitorStore) {
         let claude = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
         let codex = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
