@@ -335,3 +335,84 @@ fresh independent review, audit final publication/history and exact expected-old
 remote OID, then perform only the approved guarded PR #2 update/current-head CI
 and main-freshness gates. No remote CI success, review pass, PR merge, binary/DMG
 upload, notarization or installer release is asserted by this execution.
+
+## Preview ZIP extension and explicit proof reuse, 2026-10-29
+
+The preview extension starts at `da98e21241ae9a7310da24f084c1e6da21e04520`,
+under Plan [6504140949](https://github.com/l0lxl0lw/ai-usage-monitor/issues/1#issuecomment-6504140949).
+The selected original main and F1–F5/history-cleanup chronology above remain intact.
+No production source, test/harness source, Package.swift, Resources/Info.plist,
+existing builder or BUNDLE/check implementation is changed by this extension.
+The original ten manifest definitions are preserved exactly; ZIP and INSTALL are
+appended, and the final verification receipt must run all twelve without skips.
+
+### M-GUI / M-CODEX / M-SETUP: conditional reuse made explicit
+
+Reuse the complete observations at lines 221–325, not the earlier historical Demo
+proof. Directly rechecked production Relay SHA256 `c54d961e1f9e62376f030b8cd37cf62ec5fd374cb7edeac09ddf4793bd890390`,
+bridge `fe6203312e93772eacfd12cd9bb371c78a49f1876d1205bc25d8665af478e978`,
+the private signed exact-view harness `fb5d3aaa1f223105bf2f972055cfd572077f825924449db723328fbd94193467`,
+and official Codex binary `4f85982624b3898c8991cb80c0981b2aa71070e3537046c9a95950318a95afcc`.
+The same macOS 26.6.2 (25G83), arm64, Xcode 27.1 (27A9275) environment is present;
+both production binaries actually report only arm64 via lipo. Source/component
+equality is checked against the unchanged prior reviewed source, not filenames.
+That covers the full native route/filter/count/collapse/focus/scroll/close/reopen
+sequence, empty production Live launch, 03:07:41 UTC automatic authorized saved
+Codex startup/owned-helper termination, and unchanged setup disclosure wiring.
+This is explicit fingerprint-matched reuse of observed historical measurements,
+not a new GUI observation, new current quota measurement or provider request.
+No account/credential/preference/configuration mutation or new Live capture is
+needed for packaging; broader account/version/macOS14/accessibility gates remain.
+
+### M-PREVIEW: new real package/install proof, never reused from a source build
+
+First executed the real `/usr/bin/ditto -c -k --norsrc --keepParent` producer and
+real extraction, with exactly eight members. Directly confirmed directory flags0,
+regular flags8/method8, zero local CRC/sizes, signed16-byte PK0708 descriptors and
+Unix5855 central8/local12 extras. Extracted four-file hashes were equal. The actual
+embedded production JXA accepts that producer form before testing hostile input.
+
+ZIP records actual OS/toolchain/host and both binary architectures, exact member
+names/types/sizes, canonical ZIP checksum and original/extracted four hashes.
+INSTALL executes the actual stock-shell installer through a private curl/tool
+boundary, never a runtime insecure URL option. It installs into an isolated,
+user-owned Applications parent containing spaces, quotes and shell metacharacters;
+the actual native rename receives argv paths. Real final device/inode equality,
+source disappearance, complete inventory/four hashes/ad-hoc signatures and repeat
+install refusal are asserted. Nothing launches; provider/preferences are untouched.
+
+The final receipt's private logs bind results to source, not these descriptions:
+98 raw EOCD/central/local/flag/descriptor/extra mutations (including every unknown
+flag bit locally, centrally and together), accepted optional UTF8/stored/deflate
+forms, sparse exact-limit/+1 archive/file/total/ratio cases, malformed inventories,
+CRC corruption, checksum/transport/old-curl OS-bound/bootstrap/nonexecution faults,
+reader short-read/output/time faults, unsafe parents and preexisting destinations.
+Hostile archives receive recomputed valid outer checksums and cannot invoke
+extraction. Reader per-request/aggregate caps are additionally dominated by eight
+finite records and name/extra caps, not attacker-sized reads or a decompressor.
+
+Immediately-pre-syscall real directory/file/dangling-link collisions must preserve
+the injected inode and sentinel/link without nesting. Before/after-rename signal
+cases, binding/syscall failures and source/identity/inventory/hash postcondition
+faults must be nonzero. No fallback is allowed; after promotion a complete final
+app is never deleted on uncertainty. Cleanup removes only owned staging. Same-UID
+owner compromise/parent swapping is explicitly outside the boundary.
+
+### M-PUBLIC: local scope versus still-pending owner publication gates
+
+README leads with the ready-built/no-Xcode route and marks the tagged one-line
+download unavailable until separately authorized assets exist. CI uploads only
+the exact validated ZIP/sidecar after all twelve checks, with version/arm64/source
+SHA in the artifact name. New future-tag automation is tested against synthetic
+Git/GitHub responses, including complete inherited active zero-bypass policies,
+tag/main/build identity, each pre/postwrite guard, exact retry no-op and partial/
+mismatched failures. Only the isolated publisher grants contents-write; it never
+executes app/installer code, overwrites/deletes assets or changes policy/tags.
+
+This local evidence is not a real release/download run, current-head remote CI,
+an actual PR artifact download or clean-Mac Gatekeeper certification. The owner
+must obtain fresh independent review, publish to the same open PR #2, verify
+current-head required CI/main freshness, and download/hash that exact PR artifact.
+No actual tag, release, merge, policy change, new history rewrite or signing secret
+is authorized here; the same-key repair count remains 2/3. The worker performs no
+commit/push/journal transition and the owner records its actual returned Task ID.

@@ -189,6 +189,45 @@
       "kind": "static",
       "required": true,
       "success_pattern": "^PASS mock-static$"
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/test_preview_package.py",
+        "--app",
+        "build/Relay.app",
+        "--version",
+        "v0.1.0-preview.1",
+        "--output",
+        "build/preview"
+      ],
+      "cwd": ".",
+      "env_keys": ["DEVELOPER_DIR", "SDKROOT", "TOOLCHAINS"],
+      "format": "script",
+      "id": "ZIP",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS preview-zip$",
+      "timeout_seconds": 1800
+    },
+    {
+      "allow_skips": false,
+      "argv": [
+        "python3",
+        "scripts/test_preview_install.py",
+        "--artifacts",
+        "build/preview",
+        "--version",
+        "v0.1.0-preview.1"
+      ],
+      "cwd": ".",
+      "format": "script",
+      "id": "INSTALL",
+      "kind": "test",
+      "required": true,
+      "success_pattern": "^PASS preview-install$",
+      "timeout_seconds": 1800
     }
   ],
   "version": 1

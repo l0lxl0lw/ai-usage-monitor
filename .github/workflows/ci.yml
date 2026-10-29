@@ -10,6 +10,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -20,3 +22,10 @@ jobs:
           python3 --version
       - name: Approved manifest checks
         run: python3 scripts/ci.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Relay-v0.1.0-preview.1-${{ github.sha }}-macos-arm64
+          path: |
+            build/preview/Relay-v0.1.0-preview.1-macos-arm64.zip
+            build/preview/Relay-v0.1.0-preview.1-macos-arm64.zip.sha256
+          if-no-files-found: error

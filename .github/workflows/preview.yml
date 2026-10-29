@@ -1,0 +1,83 @@
+name: Preview (future protected tags only)
+on:
+  push:
+    tags: ['v*-preview.*']
+permissions:
+  contents: read
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 40
+    outputs:
+      commit: ${{ steps.identity.outputs.commit }}
+      tag_object: ${{ steps.identity.outputs.tag_object }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Protected exact tag on main
+        id: identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os, sys, subprocess
+          sys.path.insert(0, 'scripts')
+          from preview_support import version
+          from importlib.machinery import SourceFileLoader
+          publisher = SourceFileLoader('publisher', 'scripts/publish-preview.py').load_module()
+          tag = os.environ['TAG']
+          version(tag)
+          commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          obj = subprocess.check_output(['git', 'rev-parse', 'refs/tags/' + tag], text=True).strip()
+          api = publisher.GitHub()
+          api.identity(tag, commit, obj)
+          publisher.protected(api.policies(), tag)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'commit={commit}\ntag_object={obj}\n')
+          PY
+      - name: All twelve checks
+        run: python3 scripts/ci.py
+      - name: Match actual tag to plist and package
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          python3 scripts/package-preview.py --app build/Relay.app --version "$TAG" --output build/tag-preview
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview-${{ github.sha }}-arm64
+          path: |
+            build/tag-preview/Relay-${{ github.ref_name }}-macos-arm64.zip
+            build/tag-preview/Relay-${{ github.ref_name }}-macos-arm64.zip.sha256
+          if-no-files-found: error
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview-${{ github.sha }}-arm64
+          path: preview-artifacts
+      - name: Guarded publisher only (never execute app or installer)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          BUILD_COMMIT: ${{ needs.build.outputs.commit }}
+          TAG_OBJECT: ${{ needs.build.outputs.tag_object }}
+        run: python3 scripts/publish-preview.py --tag "$TAG" --commit "$BUILD_COMMIT" --tag-object "$TAG_OBJECT" --artifacts preview-artifacts

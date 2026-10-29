@@ -4,7 +4,33 @@ A free, MIT-licensed native macOS menu-bar usage and agent monitor. Everything,
 including connections and settings, stays inside one popover. No webview,
 dashboard window, third-party production dependency or source-service autostart.
 
-## Build and check
+## Install the ready-built preview
+
+**macOS 14+ on Apple Silicon. No Xcode, Homebrew or Python needed to install.**
+The app is ad-hoc signed (no Developer ID) and **not notarized**. Gatekeeper may
+block an internet-downloaded app; installation does not certify that it will launch
+on a clean Mac. The installer does not launch it or bypass macOS security.
+
+No preview tag/release has been published by this PR. Once this head's CI succeeds,
+download its `Relay-v0.1.0-preview.1-<source SHA>-macos-arm64` artifact from the
+[PR checks](https://github.com/l0lxl0lw/ai-usage-monitor/pull/2/checks) → CI → native
+→ Artifacts. The artifact contains the ready-built ZIP and SHA256 sidecar, not a
+DMG. Availability is conditional on that run completing; old-head artifacts are
+not proof for this source. See [install details](docs/install.md) for checking it.
+
+**Future tagged preview only:** after a separately authorized operator publishes
+`v0.1.0-preview.1` and its assets, this one line downloads the complete tag-pinned
+installer before running it. It is **not a working release-download route yet**:
+
+```sh
+/bin/sh -c 'set -eu; v=v0.1.0-preview.1; d=$(mktemp -d); cleanup() { rm -rf -- "$d"; }; trap cleanup 0; trap "exit 1" 1 2 15; (ulimit -f 1024; exec /usr/bin/curl --fail --location --proto =https --proto-redir =https --tlsv1.2 --connect-timeout 15 --max-time 120 --max-filesize 1048576 --output "$d/install-preview.sh" "https://raw.githubusercontent.com/l0lxl0lw/ai-usage-monitor/$v/scripts/install-preview.sh"); test "$(wc -c < "$d/install-preview.sh")" -le 1048576; /bin/sh "$d/install-preview.sh" "$v"'
+```
+
+It installs into `~/Applications/Relay.app` and refuses any existing `Relay.app`,
+including a dangling symlink. There is no automatic update or overwrite. The ZIP
+checksum checks bytes within the selected GitHub trust channel, not Apple identity.
+
+## Build and check (developers)
 
 Requires macOS, full Xcode selected with `xcode-select`, Swift 5.10+ and Python 3.
 Node is used only for the preserved mock's JavaScript syntax checks.
@@ -34,9 +60,9 @@ Use Connections & settings to add existing Codex/Claude profiles, manually wire
 future lifecycle telemetry, explicitly pair OpenCode V2, or observe local Orca
 metadata. No configuration outside Relay is edited automatically.
 
-For a local source install, build as above and open that exact `build/Relay.app`;
-you may copy it to your own Applications folder. There is no installer, DMG,
-notarized download or authorized binary release in this delivery.
+For a local source install, build as above and open that exact `build/Relay.app`.
+Ready-built packaging and the stock-macOS installer are separate from source builds;
+there is no DMG, notarized download or automatic launch/security bypass.
 
 Developers can build `swift build -c release --product NativeHarness` and run
 the resulting `NativeHarness --show` for synthetic-only UI checks. It shares
